@@ -39,9 +39,8 @@ import java.util.Iterator;
                 ObjectListing objectListing = s3client.listObjects(bucketName);
 
                 while (true) {
-                    for ( Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
-                        S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
-                        s3client.deleteObject(bucketName, objectSummary.getKey());
+                    for (S3ObjectSummary s3ObjectSummary : objectListing.getObjectSummaries()) {
+                        s3client.deleteObject(bucketName, s3ObjectSummary.getKey());
                     }
 
                     if (objectListing.isTruncated()) {
@@ -51,9 +50,8 @@ import java.util.Iterator;
                     }
                 };
                 VersionListing list = s3client.listVersions(new ListVersionsRequest().withBucketName(bucketName));
-                for ( Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
-                    S3VersionSummary s = (S3VersionSummary)iterator.next();
-                    s3client.deleteVersion(bucketName, s.getKey(), s.getVersionId());
+                for (S3VersionSummary s3VersionSummary : list.getVersionSummaries()) {
+                    s3client.deleteVersion(bucketName, s3VersionSummary.getKey(), s3VersionSummary.getVersionId());
                 }
                 s3client.deleteBucket(bucketName);
 
